@@ -25,7 +25,6 @@ const clothingItemSchema = new mongoose.Schema({
   },
   owner: {
     type: String,
-    //required: true,
   },
   likes: {
     type: Array,
