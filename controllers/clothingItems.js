@@ -1,6 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
 
-//GET clothing items
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
