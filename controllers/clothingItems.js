@@ -68,11 +68,11 @@ const updateClothingItem = (req, res) => {
 };
 
 const likeClothingItem = (req, res) => {
-  const { userId, itemId } = req.params;
+  const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
     itemId,
-    { $addToSet: { likes: userId } },
+    { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
@@ -90,11 +90,11 @@ const likeClothingItem = (req, res) => {
 };
 
 const unlikeClothingItem = (req, res) => {
-  const { userId, itemId } = req.params;
+  const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
     itemId,
-    { $addToSet: { likes: userId } },
+    { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
