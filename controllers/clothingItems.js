@@ -9,7 +9,6 @@ const getClothingItems = (req, res) => {
     });
 };
 
-//POST clothing item
 const createClothingItem = (req, res) => {
   const { name, weather, imageUrl, owner, likes, createdAt } = req.body;
 
@@ -31,7 +30,6 @@ const createClothingItem = (req, res) => {
     });
 };
 
-//DELETE clothing item by ID
 const deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
 
@@ -49,7 +47,6 @@ const deleteClothingItem = (req, res) => {
     });
 };
 
-//UPDATE clothing item by ID
 const updateClothingItem = (req, res) => {
   const { itemId } = req.params;
   const { imageUrl } = req.body;
@@ -68,7 +65,6 @@ const updateClothingItem = (req, res) => {
     });
 };
 
-//Like an item
 const likeClothingItem = (req, res) => {
   const { userId, itemId } = req.params;
 
@@ -90,7 +86,6 @@ const likeClothingItem = (req, res) => {
     });
 };
 
-//Unlike an item
 const unlikeClothingItem = (req, res) => {
   const { userId, itemId } = req.params;
 
