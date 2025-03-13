@@ -1,11 +1,19 @@
 const User = require("../models/user");
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  DEFAULT,
+  BAD_REQUEST_MESSAGE,
+  NOT_FOUND_MESSAGE,
+  DEFAULT_MESSAGE,
+} = require("../utils/errors");
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
     });
 };
 
@@ -17,9 +25,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
     });
 };
 
@@ -32,12 +40,12 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
     });
 };
 
@@ -51,12 +59,12 @@ const updateUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
     });
 };
 

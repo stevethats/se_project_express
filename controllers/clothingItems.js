@@ -1,32 +1,37 @@
 const ClothingItem = require("../models/clothingItem");
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  DEFAULT,
+  BAD_REQUEST_MESSAGE,
+  NOT_FOUND_MESSAGE,
+  DEFAULT_MESSAGE,
+} = require("../utils/errors");
 
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
     });
 };
 
 const createClothingItem = (req, res) => {
-  const { name, weather, imageUrl, owner, likes, createdAt } = req.body;
+  const { name, weather, imageUrl } = req.body;
 
   ClothingItem.create({
     name,
     weather,
     imageUrl,
-    owner,
-    likes,
-    createdAt,
   })
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
     });
 };
 
@@ -39,31 +44,12 @@ const deleteClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       }
-      return res.status(500).send({ message: err.message });
-    });
-};
-
-const updateClothingItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageUrl } = req.body;
-
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-    .orFail()
-    .then((item) => res.status(200).send({ data: item }))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
-      }
-      if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
-      }
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
     });
 };
 
@@ -80,12 +66,12 @@ const likeClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
     });
 };
 
@@ -102,12 +88,12 @@ const unlikeClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
       }
       if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
     });
 };
 
@@ -115,7 +101,6 @@ module.exports = {
   getClothingItems,
   createClothingItem,
   deleteClothingItem,
-  updateClothingItem,
   likeClothingItem,
   unlikeClothingItem,
 };
