@@ -24,6 +24,7 @@ const createClothingItem = (req, res) => {
     name,
     weather,
     imageUrl,
+    owner: req.user._id,
   })
     .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
@@ -80,7 +81,7 @@ const unlikeClothingItem = (req, res) => {
 
   ClothingItem.findByIdAndUpdate(
     itemId,
-    { $addToSet: { likes: req.user._id } },
+    { $pull: { likes: req.user._id } },
     { new: true }
   )
     .orFail()

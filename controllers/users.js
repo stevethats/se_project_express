@@ -49,23 +49,4 @@ const getUser = (req, res) => {
     });
 };
 
-const updateUser = (req, res) => {
-  const { userId } = req.params;
-  const { avatar } = req.body;
-
-  User.findByIdAndUpdate(userId, { $set: { avatar } })
-    .orFail()
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
-      }
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
-      }
-      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
-    });
-};
-
-module.exports = { getUsers, createUser, getUser, updateUser };
+module.exports = { getUsers, createUser, getUser };

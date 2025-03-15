@@ -2,7 +2,6 @@
 
 ### Overview
 
-- Figma
 - Express
 - Mongoose Schemas and Routes
 - Database interaction
