@@ -7,6 +7,8 @@ const {
   NOT_FOUND_MESSAGE,
   DEFAULT_MESSAGE,
 } = require("../utils/errors");
+const User = require("../models/user");
+const { usernameCompare } = require("../utils/config");
 
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
@@ -41,7 +43,14 @@ const deleteClothingItem = (req, res) => {
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => {
+      if (item.owner === req.user.name) {
+        return res.status(200).send(item);
+      }
+      return res
+        .status(403)
+        .send({ message: "User does not have permission to edit item." });
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
