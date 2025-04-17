@@ -23,6 +23,7 @@ app.use((req, res, next) => {
   req.user = {
     _id: "67cf796babb6af9c5ada1c3a",
   };
+  next();
 });
 
 app.post("/signin", login);
