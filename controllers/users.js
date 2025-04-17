@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const User = require("../models/user");
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -31,7 +31,7 @@ const createUser = (req, res) => {
       password: hash,
     })
       .then((user) => {
-        delete user.password;
+        delete User.password;
         res.status(200).send({ data: user });
       })
       .catch((err) => {
