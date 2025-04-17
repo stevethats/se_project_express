@@ -1,6 +1,6 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -88,7 +88,7 @@ const updateProfile = (req, res) => {
 
   User.findByIdAndUpdate(
     _id,
-    { name: user.name },
+    { name: User.name },
     {
       new: true,
       runValidators: true,
@@ -106,7 +106,7 @@ const updateProfile = (req, res) => {
 
   User.findByIdAndUpdate(
     _id,
-    { avatar: user.avatar },
+    { avatar: User.avatar },
     {
       new: true,
       runValidators: true,

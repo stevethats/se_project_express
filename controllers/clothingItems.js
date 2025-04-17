@@ -7,8 +7,6 @@ const {
   NOT_FOUND_MESSAGE,
   DEFAULT_MESSAGE,
 } = require("../utils/errors");
-const User = require("../models/user");
-const { usernameCompare } = require("../utils/config");
 
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
