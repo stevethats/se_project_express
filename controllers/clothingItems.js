@@ -1,19 +1,14 @@
 const ClothingItem = require("../models/clothingItem");
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  DEFAULT,
-  BAD_REQUEST_MESSAGE,
-  NOT_FOUND_MESSAGE,
-  DEFAULT_MESSAGE,
-} = require("../utils/errors");
+const { ERROR_CODES } = require("../utils/errors");
 
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
       console.error(err);
-      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
+      return res
+        .status(ERROR_CODES.SERVER_ERROR)
+        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
@@ -30,34 +25,46 @@ const createClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
       }
-      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
+      return res
+        .status(ERROR_CODES.SERVER_ERROR)
+        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
 const deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
 
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
-      if (item.owner === req.user.name) {
-        return res.status(200).send(item);
+      if (String(item.owner) !== req.user._id) {
+        return res
+          .status(ERROR_CODES.INVALID_PERM)
+          .send(ERROR_CODES.INVALID_PERM_MESSAGE);
       }
-      return res
-        .status(403)
-        .send({ message: "User does not have permission to edit item." });
+      return item
+        .deleteOne()
+        .then(() => res.status(200).send({ message: "Sucessfully deleted" }));
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
+        return res
+          .status(ERROR_CODES.NOT_FOUND)
+          .send({ message: ERROR_CODES.NOT_FOUND_MESSAGE });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
       }
-      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
+      return res
+        .status(ERROR_CODES.SERVER_ERROR)
+        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
