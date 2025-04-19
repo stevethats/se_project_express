@@ -64,7 +64,6 @@ const getCurrentUser = (req, res) => {
 };
 
 const login = (req, res) => {
-  s;
   const { email, password } = req.body;
 
   if (!email || !password) {
