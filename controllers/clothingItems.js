@@ -81,12 +81,18 @@ const likeClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
+        return res
+          .status(ERROR_CODES.NOT_FOUND)
+          .send({ message: ERROR_CODES.NOT_FOUND_MESSAGE });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
       }
-      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
+      return res
+        .status(ERROR_CODES.SERVER_ERROR)
+        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
@@ -103,12 +109,18 @@ const unlikeClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
+        return res
+          .status(ERROR_CODES.NOT_FOUND)
+          .send({ message: ERROR_CODES.NOT_FOUND_MESSAGE });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
       }
-      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
+      return res
+        .status(ERROR_CODES.SERVER_ERROR)
+        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
