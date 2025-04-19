@@ -1,24 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  DEFAULT,
-  BAD_REQUEST_MESSAGE,
-  NOT_FOUND_MESSAGE,
-  DEFAULT_MESSAGE,
-} = require("../utils/errors");
+const { ERROR_CODES } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
-
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      console.error(err);
-      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
-    });
-};
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -32,19 +16,25 @@ const createUser = (req, res) => {
     })
       .then((user) => {
         delete User.password;
-        res.status(200).send({ data: user });
+        res
+          .status(200)
+          .send({ name: user.name, avatar: user.avatar, email: user.email });
       })
       .catch((err) => {
         console.error(err);
         if (err.name === "ValidationError") {
-          return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+          return res
+            .status(ERROR_CODES.BAD_REQUEST)
+            .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
         }
         if (err.code === 11000) {
           return res
-            .status(409)
-            .send({ message: "User with this email already exists." });
+            .status(ERROR_CODES.CONFLICT_ERROR)
+            .send({ message: ERROR_CODES.CONFLICT_ERROR_MESSAGE });
         }
-        return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
+        return res
+          .status(ERROR_CODES.SERVER_ERROR)
+          .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
       })
   );
 };
@@ -58,17 +48,29 @@ const getCurrentUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: NOT_FOUND_MESSAGE });
+        return res
+          .status(ERROR_CODES.NOT_FOUND)
+          .send({ message: ERROR_CODES.NOT_FOUND_MESSAGE });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: BAD_REQUEST_MESSAGE });
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
       }
-      return res.status(DEFAULT).send({ message: DEFAULT_MESSAGE });
+      return res
+        .status(ERROR_CODES.SERVER_ERROR)
+        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
 const login = (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(ERROR_CODES.BAD_REQUEST)
+      .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
+  }
 
   User.findUserByCredentials(email, password)
     .then((user) => {
@@ -79,48 +81,43 @@ const login = (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(BAD_REQUEST).send({ message: err.message });
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(ERROR_CODES.UNAUTH_ERROR)
+          .send({ message: ERROR_CODES.UNAUTH_ERROR_MESSAGE });
+      }
+      return res
+        .status(ERROR_CODES.SERVER_ERROR)
+        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
 const updateProfile = (req, res) => {
   const { _id } = req.user;
+  const { name, avatar } = req.body;
 
   User.findByIdAndUpdate(
     _id,
-    { name: User.name },
+    { name, avatar },
     {
       new: true,
       runValidators: true,
     }
   )
     .then((user) => {
-      res.send({ data: user });
+      res.status(200).send({ data: user });
     })
     .catch((err) => {
       console.log(err);
-      res.send({
-        message: "Data validation failed or another error has occcured",
-      });
-    });
-
-  User.findByIdAndUpdate(
-    _id,
-    { avatar: User.avatar },
-    {
-      new: true,
-      runValidators: true,
-    }
-  )
-    .then((user) => {
-      res.send({ data: user });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send({
-        message: "Data validation failed or another error has occcured",
-      });
+      if (err.name === "ValidationError") {
+        return res
+          .status(ERROR_CODES.BAD_REQUEST)
+          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
+      }
+      return res
+        .status(ERROR_CODES.SERVER_ERROR)
+        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
-module.exports = { getUsers, createUser, getCurrentUser, login, updateProfile };
+module.exports = { createUser, getCurrentUser, login, updateProfile };
