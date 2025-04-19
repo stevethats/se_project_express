@@ -64,6 +64,7 @@ const getCurrentUser = (req, res) => {
 };
 
 const login = (req, res) => {
+  s;
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -72,7 +73,7 @@ const login = (req, res) => {
       .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
   }
 
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
