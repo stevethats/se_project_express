@@ -44,7 +44,7 @@ const deleteClothingItem = (req, res) => {
       if (String(item.owner) !== req.user._id) {
         return res
           .status(ERROR_CODES.INVALID_PERM)
-          .send(ERROR_CODES.INVALID_PERM_MESSAGE);
+          .send({ message: ERROR_CODES.INVALID_PERM_MESSAGE });
       }
       return item
         .deleteOne()
