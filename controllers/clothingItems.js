@@ -1,18 +1,22 @@
 const ClothingItem = require("../models/clothingItem");
-const { ERROR_CODES } = require("../utils/errors");
+const {
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
+} = require("../utils/errors");
 
-const getClothingItems = (req, res) => {
+const getClothingItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
       console.error(err);
-      return res
-        .status(ERROR_CODES.SERVER_ERROR)
-        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
+      next(err);
     });
 };
 
-const createClothingItem = (req, res) => {
+const createClothingItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
 
   ClothingItem.create({
@@ -25,26 +29,23 @@ const createClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
+        next(new BadRequestError("Request to the server failed."));
+      } else {
+        next(err);
       }
-      return res
-        .status(ERROR_CODES.SERVER_ERROR)
-        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
-const deleteClothingItem = (req, res) => {
+const deleteClothingItem = (req, res, next) => {
   const { itemId } = req.params;
 
   ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       if (String(item.owner) !== req.user._id) {
-        return res
-          .status(ERROR_CODES.INVALID_PERM)
-          .send({ message: ERROR_CODES.INVALID_PERM_MESSAGE });
+        next(
+          new ForbiddenError("User does not have permission to edit this item.")
+        );
       }
       return item
         .deleteOne()
@@ -53,22 +54,16 @@ const deleteClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_CODES.NOT_FOUND_MESSAGE });
+        next(new NotFoundError("User not found."));
+      } else if (err.name === "CastError") {
+        next(new BadRequestError("Request to the server failed."));
+      } else {
+        next(err);
       }
-      if (err.name === "CastError") {
-        return res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
-      }
-      return res
-        .status(ERROR_CODES.SERVER_ERROR)
-        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
-const likeClothingItem = (req, res) => {
+const likeClothingItem = (req, res, next) => {
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
@@ -81,22 +76,16 @@ const likeClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_CODES.NOT_FOUND_MESSAGE });
+        next(new NotFoundError("User not found."));
+      } else if (err.name === "CastError") {
+        next(new BadRequestError("Request to the server failed."));
+      } else {
+        next(err);
       }
-      if (err.name === "CastError") {
-        return res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
-      }
-      return res
-        .status(ERROR_CODES.SERVER_ERROR)
-        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
-const unlikeClothingItem = (req, res) => {
+const unlikeClothingItem = (req, res, next) => {
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
@@ -109,18 +98,12 @@ const unlikeClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_CODES.NOT_FOUND_MESSAGE });
+        next(new NotFoundError("User not found."));
+      } else if (err.name === "CastError") {
+        next(new BadRequestError("Request to the server failed."));
+      } else {
+        next(err);
       }
-      if (err.name === "CastError") {
-        return res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_CODES.BAD_REQUEST_MESSAGE });
-      }
-      return res
-        .status(ERROR_CODES.SERVER_ERROR)
-        .send({ message: ERROR_CODES.SERVER_ERROR_MESSAGE });
     });
 };
 
