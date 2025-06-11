@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -6,6 +7,8 @@ const { createUser, login } = require("./controllers/users");
 const errorHandler = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const { errors } = require("celebrate");
+
+// c6b7e2815ab544fe8b332cdb1df98df18477bccaee53d5ddba374d01d2376824
 
 const app = express();
 const { PORT = 3001 } = process.env;
