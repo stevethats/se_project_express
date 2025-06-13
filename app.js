@@ -23,6 +23,13 @@ app.use(cors());
 
 app.use(requestLogger);
 
+//Remove once code review is passed
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
 app.post("/signin", login);
 app.post("/signup", createUser);
 
