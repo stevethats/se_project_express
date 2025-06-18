@@ -43,7 +43,7 @@ const deleteClothingItem = (req, res, next) => {
     .orFail()
     .then((item) => {
       if (String(item.owner) !== req.user._id) {
-        next(
+        return next(
           new ForbiddenError("User does not have permission to edit this item.")
         );
       }
