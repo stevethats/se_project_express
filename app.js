@@ -2,11 +2,15 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const { errors } = require("celebrate");
 const mainRouter = require("./routes/index");
 const { createUser, login } = require("./controllers/users");
 const errorHandler = require("./middlewares/error-handler");
+const {
+  validateUserBody,
+  validateLoginAuthenicationBody,
+} = require("./middlewares/validation");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
-const { errors } = require("celebrate");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -23,15 +27,15 @@ app.use(cors());
 
 app.use(requestLogger);
 
-//Remove once code review is passed
+// Remove once code review is passed
 app.get("/crash-test", () => {
   setTimeout(() => {
     throw new Error("Server will crash now");
   }, 0);
 });
 
-app.post("/signin", login);
-app.post("/signup", createUser);
+app.post("/signin", validateLoginAuthenicationBody, login);
+app.post("/signup", validateUserBody, createUser);
 
 app.use("/", mainRouter);
 

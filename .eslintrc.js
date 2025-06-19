@@ -21,6 +21,6 @@ module.exports = {
   },
   rules: {
     "no-underscore-dangle": 0, // Allow "_" to be used at the front of identifiers
-    "no-unused-vars": ["error", { argsIgnorePattern: "next" }], //ignores next variable for error handling
+    "no-unused-vars": ["error", { argsIgnorePattern: "next" }], // ignores next variable for error handling
   },
 };
